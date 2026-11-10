@@ -61,8 +61,8 @@ window.STORY = [
         t: "stack", head: "Subjects of interest", ref: ["Personal history", "New York City"],
         cards: [
           { img: "orchard.jpg", cap: "Lower East Side, N.Y.", body: "Both grew up poor on Manhattan's crowded **Lower East Side**, children of Jewish immigrant families." },
-          { img: "ethel-arrest.jpg", cap: "Ethel Greenglass, b. 1915", body: "Ethel was a gifted singer who once dreamed of the stage. She became a secretary and a union organiser." },
-          { img: "julius-arrest.jpg", cap: "Julius Rosenberg, b. 1918", body: "Julius studied electrical engineering at City College and joined the **Young Communist League**." },
+          { img: "ethel-arrest.jpg", pos: "50% 4%", kb: { o: "48% 9%", x: "0%", y: "1%", s: 1.12 }, cap: "Ethel Greenglass, b. 1915", body: "Ethel was a gifted singer who once dreamed of the stage. She became a secretary and a union organiser." },
+          { img: "julius-arrest.jpg", pos: "50% 3%", kb: { o: "48% 8%", x: "0%", y: "1%", s: 1.12 }, cap: "Julius Rosenberg, b. 1918", body: "Julius studied electrical engineering at City College and joined the **Young Communist League**." },
           { img: "couple.jpg", cap: "Married June 18, 1939", body: "They met in 1936 at a union event where Ethel sang. They married in 1939 and had two sons, **Michael** (1943) and **Robert** (1947)." }
         ]
       },
@@ -233,10 +233,10 @@ window.STORY = [
         t: "board", head: "Follow the string", ref: ["Arrests", "1950"],
         nodes: [
           { img: "fuchs.jpg", name: "Fuchs", date: "Feb 1950", x: 2, y: 0, note: "**Klaus Fuchs** confesses in Britain and describes his American courier." },
-          { img: "gold.jpg", name: "Gold", date: "May 22, 1950", x: 70, y: 3, note: "The FBI finds **Harry Gold**. He confesses and names a soldier in Albuquerque." },
+          { img: "gold.jpg", pos: "50% 12%", name: "Gold", date: "May 22, 1950", x: 70, y: 3, note: "The FBI finds **Harry Gold**. He confesses and names a soldier in Albuquerque." },
           { img: "greenglass.jpg", pos: "18% 40%", name: "Greenglass", date: "June 15, 1950", x: 36, y: 31, note: "**David Greenglass** is arrested. He points to his brother-in-law." },
-          { img: "julius-arrest.jpg", name: "Julius", date: "July 17, 1950", x: 2, y: 61, note: "**Julius Rosenberg** is arrested at home in front of his family." },
-          { img: "ethel-arrest.jpg", name: "Ethel", date: "Aug 11, 1950", x: 70, y: 62, note: "**Ethel Rosenberg** is arrested after testifying to a grand jury. Her sons are 7 and 3." }
+          { img: "julius-arrest.jpg", pos: "47% 4%", zoom: 1.9, name: "Julius", date: "July 17, 1950", x: 2, y: 61, note: "**Julius Rosenberg** is arrested at home in front of his family." },
+          { img: "ethel-arrest.jpg", pos: "41% 5%", zoom: 1.9, name: "Ethel", date: "Aug 11, 1950", x: 70, y: 62, note: "**Ethel Rosenberg** is arrested after testifying to a grand jury. Her sons are 7 and 3." }
         ]
       },
       {

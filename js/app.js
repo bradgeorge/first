@@ -86,7 +86,7 @@
       `--kbs:${kb.s || rr(1.12, 1.22).toFixed(2)}`,
       `--kbd:${Math.round(rr(13, 20))}s`
     ].join(";");
-    return `<div class="photo ${o.tall ? "tall" : ""} ${o.contain ? "contain" : ""}" style="${style}"><img src="${IMG}${name}"${o.pos ? ` style="object-position:${o.pos}"` : ""} alt="${esc(cap || "")}" draggable="false" loading="lazy"></div>`;
+    return `<div class="photo ${o.tall ? "tall" : ""} ${o.contain ? "contain" : ""} ${o.zoom ? "zoom" : ""}" style="${style}${o.zoom ? `;--z:${o.zoom};--kb0:${o.zoom}` : ""}"><img src="${IMG}${name}"${o.pos ? ` style="object-position:${o.pos}"` : ""} alt="${esc(cap || "")}" draggable="false" loading="lazy"></div>`;
   }
   function stampHTML(st) {
     return `<div class="stamp ${st.cls || ""}" style="left:${st.x};top:${st.y};--sr:${st.r || -10}deg">${esc(st.txt)}</div>`;
@@ -203,6 +203,8 @@
     el.className = "sheet tone-" + (step.tone || "white");
     el.style.left = st.x + "px"; el.style.top = st.y + "px";
     el.style.setProperty("--r", st.r + "deg");
+    el.style.setProperty("--tex-x", Math.round(rr(0, 600)) + "px");
+    el.style.setProperty("--tex-y", Math.round(rr(0, 600)) + "px");
     el.setAttribute("aria-label", step.head || step.q || st.sec.title);
     const done = () => complete(k);
     const fn = R_[step.t] || R_.doc;
@@ -290,7 +292,7 @@
       el.innerHTML = `${refHTML(step.ref)}<h2>${esc(step.head)}</h2>
         <div class="stack">${step.cards.map((c, i) => `
           <div class="card" data-i="${i}" style="z-index:${n - i};transform:rotate(${(i % 2 ? 1 : -1) * (1 + i)}deg)" tabindex="${i === 0 ? 0 : -1}" role="button" aria-label="Photo ${i + 1} of ${n}. Swipe or press Enter for the next photo.">
-            <div class="polaroid">${photo(c.img, c.cap, { kb: c.kb })}<div class="cap">${esc(c.cap)}</div></div>
+            <div class="polaroid">${photo(c.img, c.cap, { kb: c.kb, pos: c.pos })}<div class="cap">${esc(c.cap)}</div></div>
             <div class="txt">${fmt(c.body)}</div>
           </div>`).join("")}
         </div>`;
@@ -447,7 +449,7 @@
         <div class="pins">
           <svg class="strings" aria-hidden="true"></svg>
           ${nodes.map((n, i) => `<div class="node" data-i="${i}" role="button" tabindex="0" aria-label="${esc(n.name)}, ${esc(n.date)}" style="left:${n.x}%;top:${n.y}%;transform:rotate(${(i % 2 ? 4 : -4)}deg)">
-              <div class="polaroid">${photo(n.img, n.name, { kb: { s: 1.1 }, pos: n.pos })}<div class="cap">${esc(n.name)}</div></div>
+              <div class="polaroid">${photo(n.img, n.name, { kb: n.pos ? { s: (n.zoom || 1) * 1.1, o: n.pos, x: "0%", y: "0%" } : { s: 1.1 }, pos: n.pos, zoom: n.zoom })}<div class="cap">${esc(n.name)}</div></div>
               <div class="date">${esc(n.date)}</div>
             </div>`).join("")}
         </div>

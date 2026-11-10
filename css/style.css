@@ -145,13 +145,13 @@ body {
 @keyframes slam { from { transform: rotate(var(--sr,-12deg)) scale(2.6); opacity: 0; } to { transform: rotate(var(--sr,-12deg)) scale(1); opacity: .85; } }
 
 /* photos + Ken Burns */
-.photo { position: relative; overflow: hidden; background: #222; height: 220px; max-width: 100%; }
+.photo { position: relative; z-index: 3; overflow: hidden; background: #222; height: 220px; max-width: 100%; }
 .photo.tall { height: 290px; }
 .photo.contain.tall { height: 330px; }
 .photo img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(.85) sepia(.25) contrast(1.08); transform-origin: var(--kbo, 50% 40%); }
 .photo.contain img { object-fit: contain; background: #e9e3d2; }
 .sheet.active .photo img { animation: kb var(--kbd, 16s) ease-in-out infinite alternate; }
-@keyframes kb { from { transform: scale(1.02) translate(0,0); } to { transform: scale(var(--kbs, 1.18)) translate(var(--kbx, -3%), var(--kby, -2%)); } }
+@keyframes kb { from { transform: scale(var(--kb0, 1.02)) translate(0,0); } to { transform: scale(var(--kbs, 1.18)) translate(var(--kbx, -3%), var(--kby, -2%)); } }
 .photo .missing { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-old); color: #bbb; font-size: 13px; letter-spacing: .1em; text-align: center; padding: 12px; }
 .cap { font-family: var(--f-old); font-size: 12px; color: var(--ink-soft); margin-top: 6px; letter-spacing: .02em; }
 
@@ -377,3 +377,41 @@ body {
   .sheet.active .photo img, .btn.primary.ready, .folder .cover .tapme, .board .node.next { animation: none !important; }
   .sheet.toss { animation-duration: .01s; }
 }
+
+/* ---------- paper texture ----------
+   Layered overlay: fine pulp grain, long fibres, foxing spots, a fold crease and
+   darkened, worn edges. Multiplied over the paper so ink sits "in" the sheet. */
+:root {
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .42  0 0 0 0 .32  0 0 0 0 .18  0 0 0 -1.25 .78'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+  --fibre: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.22 .5' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .22  0 0 0 0 .12  0 0 0 -18 5.2'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
+  --blotch: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .33  0 0 0 0 .15  0 0 0 -2.2 .95'/></filter><rect width='100%' height='100%' filter='url(%23b)'/></svg>");
+}
+.polaroid, .folder .cover .label, #index li button { position: relative; }
+.sheet:not(.folder)::after, .folder .cover::after, .folder .back::after, .folder .inside::after, .polaroid::after, .stack .card::after,
+.parcel .box::after, .parcel .flap::after, .parcel .shipping::after, .board .note::after, .folder .cover .label::after,
+#index .ixsheet::after, #index li button::after, .prop.stray::after, .prop.folderprop::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background-image: var(--blotch), var(--fibre), var(--grain);
+  background-size: 600px 600px, 420px 420px, 220px 220px;
+  background-position: var(--tex-x, 0px) var(--tex-y, 0px), 0 30px, 0 0;
+  mix-blend-mode: multiply; opacity: .5;
+  box-shadow: inset 0 0 26px rgba(95, 62, 20, .28), inset 0 0 3px rgba(80, 50, 15, .35);
+  border-radius: inherit;
+}
+/* the folder cover tab and folder-in-folder keep their own ::before */
+.board.sheet::after { opacity: .35; box-shadow: inset 0 0 40px rgba(0,0,0,.45); }
+.parcel .box::after, .parcel .flap::after { opacity: .45; }
+/* fold crease, coffee-stain ghost */
+.sheet:not(.folder):not(.board) {
+  background-image:
+    linear-gradient(180deg, transparent calc(36% - 1px), rgba(255,255,255,.45) 36%, rgba(90,60,25,.16) calc(36% + 1px), transparent calc(36% + 5px)),
+    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.35), rgba(0,0,0,0) 60%),
+    radial-gradient(ellipse at 90% 100%, rgba(120,90,40,.22), rgba(0,0,0,0) 55%),
+    radial-gradient(circle at 82% 18%, rgba(140,100,40,.14) 0 22px, transparent 40px);
+}
+/* typewriter ink: slightly soft, uneven strike */
+.sheet .body, .sheet .ref, .quiz .q, .cap { text-shadow: 0 0 .6px rgba(29,26,22,.55); }
+.sheet h2 { text-shadow: 0 0 1px rgba(29,26,22,.35); }
+
+/* board portraits that need a closer crop start already zoomed in on the face */
+.board .node .photo.zoom img { transform: scale(var(--z)); }
