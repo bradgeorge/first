@@ -134,7 +134,7 @@
   function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify({ maxSeen: S.maxSeen })); } catch (e) {} }
 
   const world = $("#world"), desk = $("#desk"), viewport = $("#viewport");
-  const btnNext = $("#next"), btnBack = $("#back"), hint = $("#hint"), caseTitle = $("#casetitle");
+  const btnBack = $("#back"), hint = $("#hint"), caseTitle = $("#casetitle");
 
   /* ---------------- camera ---------------- */
   function camTarget(st) {
@@ -229,7 +229,7 @@
           <h2><small>How to read this file</small>Handle the evidence</h2>
           <div class="body">
             <p><b>Tap</b>, <b>drag</b> and <b>swipe</b> the papers on the desk. Black bars hide classified words. Tap them to declassify.</p>
-            <p>Press <b>Continue</b> to move to the next document. <b>Back</b> takes you to the previous one.</p>
+            <p>When you finish reading, <b>tap anywhere</b> to move to the next document. <b>Back</b> takes you to the previous one.</p>
             <p>The <b>Case Index</b> lists every section. Sections you haven't reached stay classified.</p>
           </div>
           <p class="hand" style="margin-top:18px">Sound on for the full effect. — Agent on duty</p>
@@ -527,15 +527,46 @@
   }
 
   /* ---------------- navigation ---------------- */
+  // There is no Continue button: once a step is done, a tap anywhere moves on.
+  // A pulsing "tap" cue appears only after the reader has had time to read.
+  const WPS = 3.3;                      // ~200 words per minute, a comfortable reading pace
+  const GRACE = 2000;                   // extra wait after the estimated reading time
+  const words = (t) => (t || "").trim().split(/\s+/).filter(Boolean).length;
+
   function isComplete(k) {
     const t = STEPS[k].step.t;
     return !INTERACTIVE.has(t) || S.done.has(k) || k < S.maxSeen;
   }
   function complete(k) {
+    const fresh = !S.done.has(k);
     S.done.add(k);
-    if (k === S.cur) updateUI();
+    S.doneAt = performance.now();      // the tap that finished an interaction must not also advance
+    if (k === S.cur) { updateUI(); if (fresh) armCue(revealedWords(k)); }
   }
   function setHint(t) { hint.textContent = t; }
+
+  // words the reader still has to read once an interaction finishes
+  function revealedWords(k) {
+    const el = STEPS[k].el; if (!el) return 0;
+    const parts = el.querySelectorAll(".ex, .parcel .note, .jello ~ .body, .after, .board .note, .folder .inside, .stack .card:last-child .txt");
+    return [...parts].reduce((n, p) => n + words(p.innerText), 0);
+  }
+  function sheetWords(k) { const el = STEPS[k].el; return el ? words(el.innerText) : 0; }
+
+  const cue = $("#tapcue");
+  let cueTimer = 0;
+  function hideCue() { clearTimeout(cueTimer); cue.classList.remove("show"); }
+  function armCue(n) {
+    hideCue();
+    if (S.cur >= STEPS.length - 1 || !isComplete(S.cur)) return;
+    const ms = Math.max(2500, (n / WPS) * 1000) + GRACE;
+    cueTimer = setTimeout(() => { if (isComplete(S.cur)) cue.classList.add("show"); }, ms);
+  }
+
+  function next() {
+    if (S.cur >= STEPS.length - 1 || !isComplete(S.cur)) return;
+    Sfx.init(); Sfx.click(); goTo(S.cur + 1);
+  }
 
   function ensure(k) {
     const st = STEPS[k];
@@ -564,20 +595,19 @@
       st.el.classList.add("toss");
       st.el.addEventListener("animationend", (e) => { if (e.target === st.el) st.el.classList.remove("toss"); }, { once: false });
     }
-    S.cur = k;
+    S.cur = k; S.navAt = performance.now();
     if (k > S.maxSeen) { S.maxSeen = k; save(); }
     applyCam(camTarget(st), !opts.instant);
     if (!opts.instant) { Sfx.slide(); if (fresh) setTimeout(() => Sfx.rustle(), 500); }
     updateUI();
     if (st.el._onActive) st.el._onActive();
+    hideCue();
+    if (isComplete(k)) armCue(sheetWords(k) + 3); // + time for the sheet to land
   }
 
   function updateUI() {
     const st = STEPS[S.cur];
     const ok = isComplete(S.cur);
-    const last = S.cur === STEPS.length - 1;
-    btnNext.disabled = !ok || last;
-    btnNext.classList.toggle("ready", ok && !last);
     btnBack.disabled = S.cur === 0;
     let h = ok ? "" : HINTS[st.step.t] || "";
     if (ok && st.el && st.el.querySelector(".declass:not(.open)")) h = "Tap the black bars to declassify";
@@ -586,12 +616,25 @@
     caseTitle.textContent = `§ ${String(st.s + 1).padStart(2, "0")} · ${st.sec.title}`;
   }
 
-  btnNext.addEventListener("click", () => { Sfx.init(); if (isComplete(S.cur)) { Sfx.click(); goTo(S.cur + 1); } });
+  // tap anywhere to continue
+  document.addEventListener("click", (e) => {
+    const now = performance.now();
+    if (now - (S.doneAt || 0) < 450 || now - (S.navAt || 0) < 450) return;
+    const t = e.target;
+    if (!t.closest || t.closest("#topbar, #bottombar, #index, a, button:not(.opt), .declass:not(.open), [data-act]")) return;
+    const st = STEPS[S.cur];
+    // an unfinished interaction keeps its taps
+    if (!isComplete(S.cur)) {
+      if (st.el && !st.el.contains(t)) { hideCue(); setHint(HINTS[st.step.t] || hint.textContent); st.el.animate([{ filter: "brightness(1.25)" }, { filter: "none" }], { duration: 500 }); }
+      return;
+    }
+    next();
+  });
   btnBack.addEventListener("click", () => { Sfx.init(); Sfx.click(); goTo(S.cur - 1); });
   document.addEventListener("keydown", (e) => {
     if (!$("#index").hidden) { if (e.key === "Escape") closeIndex(); return; }
     if (e.target.closest && e.target.closest("button, [role=button]") && (e.key === "Enter" || e.key === " ")) return;
-    if (e.key === "ArrowRight" && !btnNext.disabled) btnNext.click();
+    if (e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") { e.preventDefault(); next(); }
     if (e.key === "ArrowLeft" && !btnBack.disabled) btnBack.click();
   });
   // keep declass hint fresh
@@ -632,7 +675,7 @@
     ix.hidden = false;
     $(".ixsheet .close", ix).focus({ preventScroll: true });
   }
-  function closeIndex() { ix.hidden = true; Sfx.rustle(); }
+  function closeIndex() { ix.hidden = true; Sfx.rustle(); S.navAt = performance.now(); }
   $("#openindex").addEventListener("click", openIndex);
   $(".ixsheet .close", ix).addEventListener("click", closeIndex);
   ix.addEventListener("click", (e) => { if (e.target === ix) closeIndex(); });

@@ -45,7 +45,7 @@ Inline markup: `**bold**`, `{{tap-to-declassify}}`, `[[permanent redaction]]`.
 
 ### Navigation rules
 
-- **Continue** unlocks once the current interaction is done.
+- There is no Continue button. Once the current interaction is done, a **tap anywhere** moves to the next document. If the reader hasn't tapped after the estimated reading time (about 200 words a minute) plus 2 seconds, a pulsing "tap to continue" cue appears at the bottom right, where a thumb naturally rests.
 - **Back** steps to the previous document at any time.
 - The **Case Index** lists every section. Sections not yet reached show as redacted and CLASSIFIED. Once the story is finished, everything is open.
 - Progress is remembered in the browser (`localStorage`).

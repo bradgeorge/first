@@ -415,3 +415,20 @@ body {
 
 /* board portraits that need a closer crop start already zoomed in on the face */
 .board .node .photo.zoom img { transform: scale(var(--z)); }
+
+/* ---------- tap-to-continue cue (appears only after the reading time) ---------- */
+.barspacer { width: 84px; flex: none; }
+#tapcue {
+  position: fixed; z-index: 25; pointer-events: none;
+  right: max(28px, calc(env(safe-area-inset-right, 0px) + 28px));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+  width: 64px; height: 64px; opacity: 0; transform: scale(.6); transition: opacity .5s, transform .5s cubic-bezier(.3,1.5,.5,1);
+}
+#tapcue.show { opacity: 1; transform: none; }
+#tapcue .dot { position: absolute; inset: 18px; border-radius: 50%; background: #f6d58e; box-shadow: 0 0 0 4px rgba(246,213,142,.25), 0 0 22px rgba(255,200,110,.85); animation: cuedot 1.8s ease-in-out infinite; }
+@keyframes cuedot { 0%,100% { transform: scale(1); } 50% { transform: scale(.82); } }
+#tapcue .ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid #f6d58e; animation: cue 1.8s ease-out infinite; }
+#tapcue .ring.r2 { animation-delay: .9s; }
+#tapcue .lbl { position: absolute; right: -4px; top: 68px; white-space: nowrap; text-align: right; font-family: var(--f-hand); font-size: 22px; color: #f6d58e; text-shadow: 0 2px 4px #000; }
+@keyframes cue { from { transform: scale(.45); opacity: 1; } to { transform: scale(1.35); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { #tapcue .ring, #tapcue .dot { animation: none; opacity: .8; } }
