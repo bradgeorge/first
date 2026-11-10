@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" font-family="Courier New, monospace">
+  <rect width="800" height="600" fill="#e9e1c9"/>
+  <g stroke="#2b4a7a" stroke-width="1" opacity=".18">
+    <path d="M0 40H800M0 80H800M0 120H800M0 160H800M0 200H800M0 240H800M0 280H800M0 320H800M0 360H800M0 400H800M0 440H800M0 480H800M0 520H800M0 560H800"/>
+    <path d="M40 0V600M80 0V600M120 0V600M160 0V600M200 0V600M240 0V600M280 0V600M320 0V600M360 0V600M400 0V600M440 0V600M480 0V600M520 0V600M560 0V600M600 0V600M640 0V600M680 0V600M720 0V600M760 0V600"/>
+  </g>
+  <text x="40" y="58" font-size="26" font-weight="bold" fill="#1d1a16">FUZE, PROXIMITY (RADIO) — SCHEMATIC</text>
+  <text x="40" y="84" font-size="15" fill="#4a4238">Illustrative sketch. Not to scale.</text>
+  <!-- shell body -->
+  <g fill="none" stroke="#1d1a16" stroke-width="4">
+    <path d="M110 230 H470 C560 230 640 270 700 300 C640 330 560 370 470 370 H110 Z" fill="#cfc4a6"/>
+    <path d="M470 230 V370"/>
+    <path d="M110 230 V370" stroke-width="8"/>
+  </g>
+  <!-- fuze internals in nose -->
+  <rect x="490" y="262" width="60" height="76" fill="#8a7f68" stroke="#1d1a16" stroke-width="3"/>
+  <circle cx="575" cy="285" r="10" fill="#f2ead6" stroke="#1d1a16" stroke-width="3"/>
+  <circle cx="575" cy="315" r="10" fill="#f2ead6" stroke="#1d1a16" stroke-width="3"/>
+  <rect x="600" y="288" width="40" height="24" fill="#b3261e" stroke="#1d1a16" stroke-width="3"/>
+  <!-- radio waves -->
+  <g fill="none" stroke="#b3261e" stroke-width="4" stroke-linecap="round">
+    <path d="M715 270 C735 285 735 315 715 330"/>
+    <path d="M740 250 C770 275 770 325 740 350"/>
+    <path d="M765 230 C805 265 805 335 765 370" opacity=".6"/>
+  </g>
+  <!-- explosive -->
+  <rect x="180" y="250" width="270" height="100" fill="#6d6a5c" opacity=".45"/>
+  <text x="250" y="307" font-size="20" fill="#1d1a16">HIGH EXPLOSIVE</text>
+  <!-- labels -->
+  <g font-size="17" fill="#1d1a16" stroke="#1d1a16" stroke-width="2">
+    <line x1="520" y1="338" x2="470" y2="450"/><text x="330" y="472" stroke="none">BATTERY</text>
+    <line x1="575" y1="325" x2="575" y2="450"/><text x="540" y="472" stroke="none">VACUUM TUBES</text>
+    <line x1="620" y1="288" x2="640" y2="170"/><text x="560" y="160" stroke="none">TINY RADIO SET</text>
+    <line x1="740" y1="250" x2="720" y2="120"/><text x="620" y="110" stroke="none">SIGNAL ECHOES OFF TARGET</text>
+  </g>
+  <text x="40" y="540" font-size="18" fill="#1d1a16">Explodes when the echo is strong enough:</text>
+  <text x="40" y="566" font-size="18" fill="#1d1a16">close to a plane, no direct hit required.</text>
+</svg>
